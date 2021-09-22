@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Strumenti di misurazione: la pertica o decempeda</title>
+    <meta charset="utf-8">
+    <meta name="description" content="Strumenti di misurazione: la pertica o decempeda">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link type="text/css" href="./styles.css" rel="stylesheet"/>
+    <!-- OPTIONAL: The :focus-visible polyfill removes the focus ring for some input types -->
+    <script src="https://unpkg.com/focus-visible@5.0.2/dist/focus-visible.js" defer></script>
+		<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css' type='text/css' media='all' />
+		<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Fjalla+One' type='text/css' media='all' />
+		<link rel='stylesheet' href='http://demo.persaper.it/css/demo.css' type='text/css' media='all' />
+		
+		<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.3/jquery.min.js'></script>
+		<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js'></script>
+		<script type='text/javascript' src='http://demo.persaper.it/js/demo.js'></script>
+                <script type='text/javascript' src='script_regula.js'></script>
+                <script type='text/javascript' src='script_ancones.js'></script>
+                <script type='text/javascript' src='script_transversaria.js'></script>
+                <script type='text/javascript' src='script_perpendicula.js'></script>
+                <script type='text/javascript' src='script_canalis.js'></script>
+		
+  </head>
+  <body>
+    <!-- <model-viewer> HTML element -->
+    <model-viewer src="corobate.glb" camera-controls camera-controls camera-orbit="-0.5172deg 81.72deg auto" min-camera-orbit="auto 0deg auto" max-camera-orbit="auto 90deg auto" id="modelViewer" ar ar-modes="webxr">
+      <button class="Hotspotaudio" slot="hotspot-1" data-position="0.1161828879571631m 0.22229297970101913m 0.02303382004452976m" data-normal="-0.02324879668718804m 7.669987628353441e-8m 0.9997297101980075m" data-visibility-attribute="visible">
+          <div class="HotspotAnnotationaudio">Descrizione e modalità di misurazione<br><audio controls style="height:35px; width:120px;">
+  <source src="https://ar3d.github.io/autori_latini/latini_1/BENNICI_Danse_Macabre.mp3"</div>
+      </button><button class="Hotspot" slot="hotspot-2" data-position="1.1485547863801142m 1.1265901395045068m 0.14239041775380024m" data-normal="0m 0.007556928737090334m 0.999971446006366m" data-visibility-attribute="visible">
+          <div class="HotspotAnnotation"><div class="popup-me_1">La regula</div></div>
+      </button><button class="Hotspot" slot="hotspot-3" data-position="2.674495583654031m 0.7108268723976446m 0.06876486503577914m" data-normal="0m 0.007556928737090334m 0.999971446006366m" data-visibility-attribute="visible">
+          <div class="HotspotAnnotation"><div class="popup-me_2">Le ancones</div></div>
+      </button><button class="Hotspot" slot="hotspot-4" data-position="-1.8924251573199287m 0.7336894541325387m 0.05235283510130741m" data-normal="0m 0.007556928737090334m 0.999971446006366m" data-visibility-attribute="visible">
+          <div class="HotspotAnnotation"><div class="popup-me_3">Le transversaria</div></div>
+         </button><button class="Hotspot" slot="hotspot-5" data-position="2.3217077644525137m 0.22875842116857825m 0.16214909843187597m" data-normal="-0.940902712511619m -0.16744407933549973m 0.29438846085362175m" data-visibility-attribute="visible">
+          <div class="HotspotAnnotation"><div class="popup-me_4">I perpendicula</div></div>
+      </button><button class="Hotspot" slot="hotspot-6" data-position="0.13116509587153763m 1.2828191772297166m 0.002403014665079431m" data-normal="0m 0.999971446006366m -0.007556928737090334m" data-visibility-attribute="visible">
+          <div class="HotspotAnnotation"><div class="popup-me_4">Il canalis</div></div>
+      </button>
+
+      <div class="progress-bar hide" slot="progress-bar">
+          <div class="update-bar"></div>
+      </div>
+      <button slot="ar-button" id="ar-button">
+          Mostra nello spazio
+      </button>
+      <div id="ar-prompt">
+          <img src="ar_hand_prompt.png">
+      </div>
+       <div class="mwc-switch-wrapper">
+      <mwc-switch id="toggleHotspots"><span>Mostra gli hotspot</span></mwc-switch>
+    </div>
+<!--     <paper-toggle-button id="toggleHotspots">Show annotations</paper-toggle-button> --> 
+      <div class="mwc-switch-wrapper-1">
+      <mwc-switch id="toggleHotspotsaudio"><span>Audiodescrizione</span></mwc-switch>
+    </div>
+<!--     <paper-toggle-button id="toggleHotspotsaudio">Show annotations</paper-toggle-button> --> 
+    </model-viewer> 
+    <script src="script.js"></script>
+    <script type="module">
+    
+    toggleHotspots.addEventListener('change', () => {
+      modelViewer.classList.toggle('show-hotspots', toggleHotspots.checked);
+    });
+    toggleHotspotsaudio.addEventListener('change', () => {
+      modelViewer.classList.toggle('show-hotspotsaudio', toggleHotspotsaudio.checked);
+    });
+
+  </script>
+
+<script>
+(() => {
+  const modelViewer = document.querySelector('#modelViewer');
+  const tapDistance = 2;
+  let panning = false;
+  let panX, panY;
+  let startX, startY;
+  let lastX, lastY;
+  let metersPerPixel;
+
+  const startPan = () => {
+    const orbit = modelViewer.getCameraOrbit();
+    const {theta, phi, radius} = orbit;
+    const psi = theta - modelViewer.turntableRotation;
+    metersPerPixel = 0.75 * radius / modelViewer.getBoundingClientRect().height;
+    panX = [-Math.cos(psi), 0, Math.sin(psi)];
+    panY = [
+      -Math.cos(phi) * Math.sin(psi),
+      Math.sin(phi),
+      -Math.cos(phi) * Math.cos(psi)
+    ];
+    modelViewer.interactionPrompt = 'none';
+  };
+
+  const movePan = (thisX, thisY) => {
+    const dx = (thisX - lastX) * metersPerPixel;
+    const dy = (thisY - lastY) * metersPerPixel;
+    lastX = thisX;
+    lastY = thisY;
+
+    const target = modelViewer.getCameraTarget();
+    target.x += dx * panX[0] + dy * panY[0];
+    target.y += dx * panX[1] + dy * panY[1];
+    target.z += dx * panX[2] + dy * panY[2];
+    modelViewer.cameraTarget = `${target.x}m ${target.y}m ${target.z}m`;
+
+    // This pauses turntable rotation
+    modelViewer.dispatchEvent(new CustomEvent(
+          'camera-change', {detail: {source: 'user-interaction'}}));
+  };
+
+  const recenter = (pointer) => {
+    panning = false;
+    if (Math.abs(pointer.clientX - startX) > tapDistance ||
+        Math.abs(pointer.clientY - startY) > tapDistance)
+      return;
+    const rect = modelViewer.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    const hit = modelViewer.positionAndNormalFromPoint(x, y);
+    modelViewer.cameraTarget =
+        hit == null ? 'auto auto auto' : hit.position.toString();
+  };
+
+  const onPointerUp = (event) => {
+    const pointer = event.clientX ? event : event.changedTouches[0];
+    if (Math.abs(pointer.clientX - startX) < tapDistance &&
+        Math.abs(pointer.clientY - startY) < tapDistance) {
+      recenter(pointer);
+    }
+    panning = false;
+  };
+
+  modelViewer.addEventListener('mousedown', (event) => {
+    startX = event.clientX;
+    startY = event.clientY;
+    panning = event.button === 2 || event.ctrlKey || event.metaKey ||
+        event.shiftKey;
+    if (!panning)
+      return;
+
+    lastX = startX;
+    lastY = startY;
+    startPan();
+    event.stopPropagation();
+  }, true);
+
+  modelViewer.addEventListener('touchstart', (event) => {
+    startX = event.touches[0].clientX;
+    startY = event.touches[0].clientY;
+    panning = event.touches.length === 2;
+    if (!panning)
+      return;
+
+    const {touches} = event;
+    lastX = 0.5 * (touches[0].clientX + touches[1].clientX);
+    lastY = 0.5 * (touches[0].clientY + touches[1].clientY);
+    startPan();
+  }, true);
+
+  modelViewer.addEventListener('mousemove', (event) => {
+    if (!panning)
+      return;
+
+    movePan(event.clientX, event.clientY);
+    event.stopPropagation();
+  }, true);
+
+  modelViewer.addEventListener('touchmove', (event) => {
+    if (!panning || event.touches.length !== 2)
+      return;
+
+    const {touches} = event;
+    const thisX = 0.5 * (touches[0].clientX + touches[1].clientX);
+    const thisY = 0.5 * (touches[0].clientY + touches[1].clientY);
+    movePan(thisX, thisY);
+  }, true);
+
+  self.addEventListener('mouseup', (event) => {
+    recenter(event);
+  }, true);
+  
+  self.addEventListener('touchend', (event) => {
+    if (event.touches.length === 0) {
+      recenter(event.changedTouches[0]);
+    }
+  }, true);
+})();
+</script>
+
+    <!-- Loads <model-viewer> for browsers: -->
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <!--   <script type="module" src="https://unpkg.com/@polymer/paper-toggle-button@3.0.1/paper-toggle-button.js?module"></script> -->
+  <script type="module" src="https://unpkg.com/@material/mwc-switch@0.14.1/mwc-switch.js?module"></script>
+  </body>
+</html>
