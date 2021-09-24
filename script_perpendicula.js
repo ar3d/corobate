@@ -2,7 +2,7 @@ $(document).ready(function() {
 
 	$(".popup-me_4").click(function(){
 
-		pop_init_4( "L'allineamento orizzontale avveniva attraverso quattro fili a piombo, i perpendicula, posizionati ai lati della regula. Il livellamento veniva eseguito allineando i fili con delle tacche di allineamento presenti sulle traverse." );
+		pop_init_4( "L'allineamento orizzontale avveniva attraverso quattro fili a piombo, i perpendicula, posizionati ai lati della regula. Il livellamento veniva eseguito allineando i fili con le tacche di allineamento presenti sulle traverse." );
 
 	});
 

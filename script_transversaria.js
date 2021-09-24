@@ -2,7 +2,7 @@ $(document).ready(function() {
 
 	$(".popup-me_3").click(function(){
 
-		pop_init_3( "Due aste trasversali dette transversaria, posizionate in basso a incastro tra la regula e le ancones, avevano la funzione di migliorare la stabilità dello strumento evitando che la riga flettesse troppo." );
+		pop_init_3( "Due aste trasversali dette transversaria, posizionate in obliquo a incastro tra la regula e le ancones, avevano la funzione di migliorare la stabilità dello strumento evitando che la riga flettesse troppo." );
 
 	});
 
